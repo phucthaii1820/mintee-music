@@ -49,7 +49,9 @@
     "_lint": "eslint --config ./.eslintrc.json --ext js --ext jsx --ext tsx --ext ts",
     "lint": "npm run _lint -- ./src/",
     "lint:fix": "npm run _lint -- --fix ./src/",
-    "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,scss,md,json}' --config ./.prettierrc"
+    "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,scss,md,json}' --config ./.prettierrc",
+    "predeploy" : "npm run build",
+    "deploy" : "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -80,6 +82,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
+    "gh-pages": "^5.0.0",
     "husky": ">=6",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1"
@@ -88,5 +91,6 @@
     "src/**/*.{js,ts,jsx,tsx}": [
       "eslint --config ./.eslintrc.json --ext js --ext ts --ext jsx --ext tsx --fix"
     ]
-  }
+  },
+  "homepage": "https://phucthaii1820.github.io/mintee-music"
 }
