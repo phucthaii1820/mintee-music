@@ -8,9 +8,8 @@ import FastForwardRounded from '@mui/icons-material/FastForwardRounded'
 import FastRewindRounded from '@mui/icons-material/FastRewindRounded'
 import ReactAudioPlayer from 'react-audio-player'
 
-// import { dataMusic } from 'consts/music'
-import { storage } from 'firebaseConfig'
-import { getDownloadURL, listAll, ref } from 'firebase/storage'
+import { db } from 'firebaseConfig'
+import { collection, getDocs } from 'firebase/firestore'
 
 const gradient = keyframes`
 0% {
@@ -64,6 +63,8 @@ const Home = () => {
   const [isHover, setIsHover] = React.useState(false)
   const [dataMusic, setDataMusic] = React.useState<any>([])
 
+  const musicCollection = collection(db, 'music')
+
   const onLoadedMetadata = () => {
     if (refMusic.current) {
       setDuration(refMusic?.current?.audioEl?.current?.duration)
@@ -97,22 +98,20 @@ const Home = () => {
     }
   }, [position])
 
+  const getMusic = async () => {
+    const data = await getDocs(musicCollection)
+    setDataMusic(
+      data.docs.map((doc) => {
+        return { ...doc.data(), id: doc.id }
+      }),
+    )
+  }
+
   React.useEffect(() => {
-    listAll(ref(storage, 'song')).then((response) => {
-      response.items.forEach((item) => {
-        getDownloadURL(item).then((url) => {
-          setDataMusic((prev: any) => [
-            ...prev,
-            {
-              song: item.name,
-              singer: item.name,
-              mp3: url,
-            },
-          ])
-        })
-      })
-    })
+    getMusic()
   }, [])
+
+  console.log(dataMusic)
 
   return (
     <Box
@@ -465,9 +464,6 @@ const Home = () => {
                 onListen={() => setPosition(refMusic.current.audioEl.current.currentTime)}
                 onLoadedMetadata={onLoadedMetadata}
                 autoPlay
-                // onSeeked={() => {
-                //   refMusic.current.audioEl.current.currentTime = position
-                // }}
               />
             </Grid>
           </Grid>
