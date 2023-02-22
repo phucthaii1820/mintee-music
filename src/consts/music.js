@@ -116,7 +116,7 @@ export const dataMusic = [
     mp3: music14,
   },
   {
-    song: 'Playlist đó, nhưng tôi không biết ….',
+    song: 'Playlist đó, nhưng tôi không biết đặt tên sao….',
     singer: 'Vietnamese music',
     avatar: image15,
     mp3: music15,

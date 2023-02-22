@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Card, CardMedia, Grid, IconButton, keyframes, Slider, Typography } from '@mui/material'
+import { Box, Card, CardMedia, Grid, IconButton, keyframes, Slider, Typography, useMediaQuery } from '@mui/material'
 import styled from '@emotion/styled'
 import PauseRounded from '@mui/icons-material/PauseRounded'
 import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded'
@@ -57,6 +57,8 @@ const Home = () => {
   const [paused, setPaused] = React.useState(true)
   const [audioIndex, setAudioIndex] = React.useState(0)
   const refMusic = React.useRef(null) as any
+  const isMobile = useMediaQuery('(max-width:900px)')
+  const [isHover, setIsHover] = React.useState(false)
 
   const onLoadedMetadata = () => {
     if (refMusic.current) {
@@ -127,24 +129,114 @@ const Home = () => {
                 flexDirection: 'column',
               }}
             >
-              <CardMedia
-                component="img"
-                height="200px"
-                image={dataMusic[audioIndex].avatar}
-                alt="random"
+              <Box
                 sx={{
-                  width: '200px',
-                  borderRadius: '50%',
-                  animation: paused
-                    ? `1s ease 0s 1 normal forwards running ${rotatePause}`
-                    : `10s linear 0s infinite normal none running ${rotatePlay} `,
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-around',
+                  width: '100%',
                 }}
-              />
+              >
+                {isMobile && (
+                  <IconButton
+                    aria-label="previous song"
+                    onClick={() => {
+                      prevSong()
+                      refMusic.current.audioEl.current.play()
+                    }}
+                    sx={{
+                      color: 'white',
+                    }}
+                  >
+                    <FastRewindRounded fontSize="large" />
+                  </IconButton>
+                )}
 
-              <Typography variant="h5" fontWeight={700} mt={6} color="primary.main">
+                <CardMedia
+                  component="img"
+                  height={isMobile ? '130px' : '200px'}
+                  image={dataMusic[audioIndex].avatar}
+                  alt="random"
+                  sx={{
+                    width: isMobile ? '130px' : '200px',
+                    borderRadius: '50%',
+                    animation: paused
+                      ? `1s ease 0s 1 normal forwards running ${rotatePause}`
+                      : `10s linear 0s infinite normal none running ${rotatePlay} `,
+                    cursor: 'pointer',
+                    filter: isHover ? 'brightness(0.8)' : 'brightness(1)',
+                  }}
+                  onClick={() => {
+                    setPaused(!paused)
+                    if (paused) refMusic.current.audioEl.current.play()
+                    else refMusic.current.audioEl.current.pause()
+                  }}
+                  onMouseEnter={() => {
+                    setIsHover(true)
+                  }}
+                  onMouseLeave={() => {
+                    setIsHover(false)
+                  }}
+                />
+                {isHover && (
+                  <IconButton
+                    aria-label={paused ? 'play' : 'pause'}
+                    sx={{
+                      position: 'absolute',
+                      left: '50%',
+                      top: '50%',
+                      transform: 'translate(-50%,-50%)',
+                      color: 'white',
+                    }}
+                    onClick={() => {
+                      setPaused(!paused)
+                      if (paused) refMusic.current.audioEl.current.play()
+                      else refMusic.current.audioEl.current.pause()
+                    }}
+                    onMouseEnter={() => {
+                      setIsHover(true)
+                    }}
+                  >
+                    {paused ? (
+                      <PlayArrowRounded sx={{ fontSize: '3rem' }} />
+                    ) : (
+                      <PauseRounded sx={{ fontSize: '3rem' }} />
+                    )}
+                  </IconButton>
+                )}
+
+                {isMobile && (
+                  <IconButton
+                    aria-label="next song"
+                    onClick={() => {
+                      nextSong()
+                      refMusic.current.audioEl.current.play()
+                    }}
+                    sx={{
+                      color: 'white',
+                    }}
+                  >
+                    <FastForwardRounded fontSize="large" />
+                  </IconButton>
+                )}
+              </Box>
+
+              <Typography
+                variant={isMobile ? 'h6' : 'h5'}
+                fontWeight={700}
+                mt={6}
+                color="primary.main"
+                sx={{
+                  width: '100%',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
                 {dataMusic[audioIndex].song}
               </Typography>
-              <Typography fontWeight={700}>{dataMusic[audioIndex].singer}</Typography>
+              <Typography fontWeight={isMobile ? 300 : 700}>{dataMusic[audioIndex].singer}</Typography>
 
               <Box
                 mt={2}
@@ -196,54 +288,56 @@ const Home = () => {
                   <TinyText>{formatDuration(duration)}</TinyText>
                 </Box>
 
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    mt: -1,
-                  }}
-                >
-                  <IconButton
-                    aria-label="previous song"
-                    onClick={() => {
-                      prevSong()
-                      refMusic.current.audioEl.current.play()
+                {!isMobile && (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      mt: -1,
                     }}
                   >
-                    <FastRewindRounded fontSize="large" />
-                  </IconButton>
-                  <IconButton
-                    aria-label={paused ? 'play' : 'pause'}
-                    onClick={() => {
-                      setPaused(!paused)
-                      if (paused) refMusic.current.audioEl.current.play()
-                      else refMusic.current.audioEl.current.pause()
-                    }}
-                  >
-                    {paused ? (
-                      <PlayArrowRounded sx={{ fontSize: '3rem' }} />
-                    ) : (
-                      <PauseRounded sx={{ fontSize: '3rem' }} />
-                    )}
-                  </IconButton>
-                  <IconButton
-                    aria-label="next song"
-                    onClick={() => {
-                      nextSong()
-                      refMusic.current.audioEl.current.play()
-                    }}
-                  >
-                    <FastForwardRounded fontSize="large" />
-                  </IconButton>
-                </Box>
+                    <IconButton
+                      aria-label="previous song"
+                      onClick={() => {
+                        prevSong()
+                        refMusic.current.audioEl.current.play()
+                      }}
+                    >
+                      <FastRewindRounded fontSize="large" />
+                    </IconButton>
+                    <IconButton
+                      aria-label={paused ? 'play' : 'pause'}
+                      onClick={() => {
+                        setPaused(!paused)
+                        if (paused) refMusic.current.audioEl.current.play()
+                        else refMusic.current.audioEl.current.pause()
+                      }}
+                    >
+                      {paused ? (
+                        <PlayArrowRounded sx={{ fontSize: '3rem' }} />
+                      ) : (
+                        <PauseRounded sx={{ fontSize: '3rem' }} />
+                      )}
+                    </IconButton>
+                    <IconButton
+                      aria-label="next song"
+                      onClick={() => {
+                        nextSong()
+                        refMusic.current.audioEl.current.play()
+                      }}
+                    >
+                      <FastForwardRounded fontSize="large" />
+                    </IconButton>
+                  </Box>
+                )}
               </Box>
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
             <Box
               sx={{
-                maxHeight: '520px',
+                maxHeight: isMobile ? 'calc(100vh - 490px)' : '520px',
                 overflowY: 'auto',
                 paddingRight: '10px',
                 borderRadius: '10px',
@@ -279,6 +373,7 @@ const Home = () => {
                   onClick={() => {
                     setPosition(0)
                     setAudioIndex(index)
+                    setPaused(false)
                     refMusic.current.audioEl.current.play()
                   }}
                 >
@@ -310,7 +405,16 @@ const Home = () => {
                         ml: 2,
                       }}
                     >
-                      <Typography component="div" variant="h6">
+                      <Typography
+                        component="div"
+                        variant="h6"
+                        sx={{
+                          width: '100%',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
                         {item.song}
                       </Typography>
                       <Typography variant="subtitle2" component="div">
@@ -334,7 +438,7 @@ const Home = () => {
             <ReactAudioPlayer
               src={dataMusic[audioIndex].mp3}
               ref={refMusic}
-              listenInterval={1000}
+              listenInterval={100}
               onListen={() => setPosition(refMusic.current.audioEl.current.currentTime)}
               onLoadedMetadata={onLoadedMetadata}
               autoPlay
