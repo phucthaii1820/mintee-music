@@ -1,0 +1,5 @@
+.music-card {
+    --smooth-corners: 15;
+    mask-image: paint(smooth-corners);
+    -webkit-mask-image: paint(smooth-corners);
+}

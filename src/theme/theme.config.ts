@@ -33,7 +33,7 @@ const themeOptions: ThemeOptionsOld = {
     },
   },
   typography: {
-    fontFamily: ['Montserrat', 'sans-serif'].join(','),
+    fontFamily: ['Lexend', 'sans-serif'].join(','),
     fontSize: 14,
   },
   components: {
@@ -49,7 +49,7 @@ const themeOptions: ThemeOptionsOld = {
               fontWeight: 500,
               lineHeight: 1.6,
               color: themeColors.color.secondary,
-              fontFamily: 'Montserrat',
+              fontFamily: 'Lexend',
               '&::placeholder': {
                 color: themeColors.color.lightSilver,
                 opacity: 1,
@@ -66,7 +66,7 @@ const themeOptions: ThemeOptionsOld = {
     MuiButton: {
       styleOverrides: {
         root: {
-          fontFamily: 'Montserrat',
+          fontFamily: 'Lexend',
           padding: '4px 8px',
           borderRadius: '2px',
           textTransform: 'inherit',

@@ -1,3 +1,5 @@
 declare module '*.png'
 declare module '*.jpg'
 declare module 'get-mp3-duration'
+declare module 'smooth-corners'
+declare module 'fonts/geomanist-regular-webfont.woff2'

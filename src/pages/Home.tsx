@@ -7,9 +7,13 @@ import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded'
 import FastForwardRounded from '@mui/icons-material/FastForwardRounded'
 import FastRewindRounded from '@mui/icons-material/FastRewindRounded'
 import ReactAudioPlayer from 'react-audio-player'
+import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 
 import { db } from 'firebaseConfig'
 import { collection, getDocs } from 'firebase/firestore'
+import 'styles/eq-bar.css'
+import { cyan } from '@mui/material/colors'
+import 'styles/music.css'
 
 const gradient = keyframes`
 0% {
@@ -128,7 +132,7 @@ const Home = () => {
       {dataMusic.length > 0 && (
         <Box
           sx={{
-            maxWidth: '1200px',
+            maxWidth: '1400px',
             width: '100%',
             display: 'flex',
             alignItems: 'stretch',
@@ -136,18 +140,20 @@ const Home = () => {
           }}
         >
           <Grid container spacing={6}>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={5}>
               <Box
                 sx={{
-                  background: 'rgba(0,0,0,0.1)',
-                  boxShadow: '0 0 10px rgba(0,0,0,0.2)',
+                  background: 'white',
+                  // background: 'rgba(0,0,0,0.1)',
+                  boxShadow: '0 0 5px rgba(0,0,0,0.2)',
                   padding: '50px',
-                  borderRadius: '10px',
+                  // borderRadius: '40px',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
                   flexDirection: 'column',
                 }}
+                className="music-card"
               >
                 <Box
                   sx={{
@@ -164,9 +170,6 @@ const Home = () => {
                       onClick={() => {
                         prevSong()
                         refMusic.current.audioEl.current.play()
-                      }}
-                      sx={{
-                        color: 'white',
                       }}
                     >
                       <FastRewindRounded fontSize="large" />
@@ -233,9 +236,6 @@ const Home = () => {
                         nextSong()
                         refMusic.current.audioEl.current.play()
                       }}
-                      sx={{
-                        color: 'white',
-                      }}
                     >
                       <FastForwardRounded fontSize="large" />
                     </IconButton>
@@ -244,7 +244,7 @@ const Home = () => {
 
                 <Typography
                   variant={isMobile ? 'h6' : 'h5'}
-                  fontWeight={700}
+                  fontWeight={900}
                   mt={6}
                   color="primary.main"
                   sx={{
@@ -257,7 +257,7 @@ const Home = () => {
                 >
                   {dataMusic[audioIndex].song}
                 </Typography>
-                <Typography fontWeight={isMobile ? 300 : 700}>{dataMusic[audioIndex].singer}</Typography>
+                <TinyText fontWeight={isMobile ? 300 : 700}>{dataMusic[audioIndex].singer}</TinyText>
 
                 <Box
                   mt={2}
@@ -285,7 +285,7 @@ const Home = () => {
                         height: 8,
                         transition: '0.3s cubic-bezier(.47,1.64,.41,.8)',
                         '&:before': {
-                          boxShadow: '0 2px 12px 0 rgba(0,0,0,0.4)',
+                          // boxShadow: '0 2px 12px 0 rgba(0,0,0,0.4)',
                         },
                         '&.Mui-active': {
                           width: 20,
@@ -355,7 +355,7 @@ const Home = () => {
                 </Box>
               </Box>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={7}>
               <Box
                 sx={{
                   maxHeight: isMobile ? 'calc(100vh - 490px)' : '520px',
@@ -364,6 +364,7 @@ const Home = () => {
                   borderRadius: '10px',
                   '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
                     width: '5px',
+                    hidden: 'true',
                   },
                   '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
                     background: 'rgba(0,0,0,0.1)',
@@ -378,20 +379,23 @@ const Home = () => {
                   <Card
                     // eslint-disable-next-line react/no-array-index-key
                     key={index}
+                    // className="music-list"
                     sx={{
-                      height: '100px',
+                      height: '90px',
                       position: 'relative',
-                      color: index === audioIndex ? 'white' : 'theme.palette.text.primary',
-                      background: index === audioIndex ? 'rgba(0,0,0,0.35)' : 'rgba(0,0,0,0.1)',
-                      boxShadow: '0 0 10px rgba(0,0,0,0.2)',
-                      m: 1,
+                      color: index === audioIndex ? 'theme.palette.text.primary' : 'theme.palette.text.primary',
+                      background: index === audioIndex ? 'white' : 'white',
+                      filter: index === audioIndex ? 'brightness(1)' : 'brightness(0.8)',
+                      boxShadow: index === audioIndex ? '0 0 5px rgba(0,0,0,0.2)' : 'none',
                       borderRadius: '10px',
                       '&:hover': {
-                        background: 'rgba(0,0,0,0.35)',
                         cursor: 'pointer',
-                        color: 'white !important',
+                        background: 'white',
+                        filter: 'brightness(1)',
                       },
+                      mx: 1,
                       mb: index + 1 === dataMusic?.length ? 0 : 2,
+                      p: '8px 15px',
                     }}
                     onClick={() => {
                       setPosition(0)
@@ -400,32 +404,75 @@ const Home = () => {
                       refMusic.current.audioEl.current.play()
                     }}
                   >
-                    <Box sx={{ display: 'flex', width: '100%' }}>
-                      <CardMedia
-                        component="img"
-                        sx={{
-                          width: '80px',
-                          height: '80px',
-                          p: '10px 15px',
-                          borderRadius: index === audioIndex ? '50%' : '20px',
-                          animation:
-                            // eslint-disable-next-line no-nested-ternary
-                            index === audioIndex
-                              ? paused
-                                ? `1s ease 0s 1 normal forwards running ${rotatePause}`
-                                : `10s linear 0s infinite normal none running ${rotatePlay} `
-                              : 'none',
-                        }}
-                        src={item.avatar}
-                        alt="image song"
-                      />
+                    <Box sx={{ display: 'flex', width: '100%', height: '100%' }}>
                       <Box
                         sx={{
                           display: 'flex',
                           justifyContent: 'center',
-                          height: '100px',
+                          alignItems: 'center',
+                          px: 1,
+                        }}
+                      >
+                        <Typography
+                          fontWeight={700}
+                          sx={{
+                            color: index === audioIndex ? 'primary.main' : 'none',
+                            opacity: index === audioIndex ? 1 : 0.38,
+                          }}
+                        >
+                          {index < 10 ? `0${index + 1}` : index + 1}
+                        </Typography>
+                      </Box>
+
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <CardMedia
+                          component="img"
+                          sx={{
+                            width: '80px',
+                            height: '80px',
+                            px: '10px',
+                            borderRadius: '50%',
+                            animation:
+                              // eslint-disable-next-line no-nested-ternary
+                              index === audioIndex
+                                ? paused
+                                  ? `1s ease 0s 1 normal forwards running ${rotatePause}`
+                                  : `10s linear 0s infinite normal none running ${rotatePlay} `
+                                : 'none',
+                          }}
+                          src={item.avatar}
+                          alt="image song"
+                        />
+                      </Box>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <ArrowRightIcon
+                          sx={{
+                            opacity: index === audioIndex ? 1 : 0.38,
+                            fontSize: '2rem',
+                            color: index === audioIndex ? 'primary.main' : 'none',
+                          }}
+                        />
+                      </Box>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'center',
+                          height: '100%',
                           flexDirection: 'column',
                           ml: 2,
+                          maxWidth: '50%',
                         }}
                       >
                         <Typography
@@ -436,24 +483,46 @@ const Home = () => {
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
+                            color: index === audioIndex ? 'primary.main' : 'none',
+                            opacity: index === audioIndex ? 1 : 0.38,
                           }}
                         >
                           {item.song}
                         </Typography>
-                        <Typography variant="subtitle2" component="div">
+                        <Typography
+                          variant="subtitle2"
+                          component="div"
+                          sx={{
+                            color: index === audioIndex ? 'primary.main' : 'none',
+                            opacity: index === audioIndex ? 0.6 : 0.38,
+                          }}
+                        >
                           {item.singer}
                         </Typography>
                       </Box>
-                      {/* <TinyText
-                      variant="subtitle1"
-                      sx={{
-                        position: 'absolute',
-                        right: '10px',
-                        top: 'calc(50% - 0.7rem)',
-                      }}
-                    >
-                      5:00
-                    </TinyText> */}
+                      {index === audioIndex && !paused && (
+                        <Box
+                          sx={{
+                            position: 'absolute',
+                            right: '20px',
+                            top: 'calc(50% - 0.7rem)',
+                          }}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            style={{
+                              fill: cyan[500],
+                            }}
+                          >
+                            <rect className="eq-bar eq-bar--1" x="4" y="4" width="3.7" height="8" />
+                            <rect className="eq-bar eq-bar--2" x="10.2" y="4" width="3.7" height="16" />
+                            <rect className="eq-bar eq-bar--3" x="16.3" y="4" width="3.7" height="11" />
+                          </svg>
+                        </Box>
+                      )}
                     </Box>
                   </Card>
                 ))}
