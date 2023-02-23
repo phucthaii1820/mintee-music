@@ -111,8 +111,6 @@ const Home = () => {
     getMusic()
   }, [])
 
-  console.log(dataMusic)
-
   return (
     <Box
       sx={{
@@ -142,6 +140,7 @@ const Home = () => {
               <Box
                 sx={{
                   background: 'rgba(0,0,0,0.1)',
+                  boxShadow: '0 0 10px rgba(0,0,0,0.2)',
                   padding: '50px',
                   borderRadius: '10px',
                   display: 'flex',
@@ -384,6 +383,8 @@ const Home = () => {
                       position: 'relative',
                       color: index === audioIndex ? 'white' : 'theme.palette.text.primary',
                       background: index === audioIndex ? 'rgba(0,0,0,0.35)' : 'rgba(0,0,0,0.1)',
+                      boxShadow: '0 0 10px rgba(0,0,0,0.2)',
+                      m: 1,
                       borderRadius: '10px',
                       '&:hover': {
                         background: 'rgba(0,0,0,0.35)',

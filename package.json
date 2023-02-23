@@ -27,6 +27,7 @@
     "react-audio-player": "^0.17.0",
     "react-dom": "^18.2.0",
     "react-google-login": "^5.2.2",
+    "react-images-uploading": "^3.1.7",
     "react-input-slider": "^6.0.1",
     "react-native": "^0.71.3",
     "react-native-file-access": "^2.5.2",
