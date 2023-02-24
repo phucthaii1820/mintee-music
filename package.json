@@ -90,7 +90,8 @@
     "gh-pages": "^5.0.0",
     "husky": ">=6",
     "lint-staged": "^13.0.3",
-    "prettier": "^2.7.1"
+    "prettier": "^2.7.1",
+    "webpack": "^5.75.0"
   },
   "lint-staged": {
     "src/**/*.{js,ts,jsx,tsx}": [
