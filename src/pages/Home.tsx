@@ -1,6 +1,18 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable no-unused-vars */
 import React from 'react'
-import { Box, Card, CardMedia, Grid, IconButton, keyframes, Slider, Typography, useMediaQuery } from '@mui/material'
+import {
+  Box,
+  Card,
+  CardMedia,
+  Grid,
+  IconButton,
+  keyframes,
+  Slider,
+  Stack,
+  Typography,
+  useMediaQuery,
+} from '@mui/material'
 import styled from '@emotion/styled'
 import PauseRounded from '@mui/icons-material/PauseRounded'
 import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded'
@@ -10,6 +22,11 @@ import ReactAudioPlayer from 'react-audio-player'
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import LogoutIcon from '@mui/icons-material/Logout'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+import VolumeUpRounded from '@mui/icons-material/VolumeUpRounded'
+import VolumeDownRounded from '@mui/icons-material/VolumeDownRounded'
+import VolumeMuteRoundedIcon from '@mui/icons-material/VolumeMuteRounded'
+import ShuffleRoundedIcon from '@mui/icons-material/ShuffleRounded'
+import ThunderstormRoundedIcon from '@mui/icons-material/ThunderstormRounded'
 
 import { auth, db, logout } from 'firebaseConfig'
 import { collection, getDocs } from 'firebase/firestore'
@@ -71,7 +88,10 @@ const Home = () => {
   const refMusic = React.useRef(null) as any
   const isMobile = useMediaQuery('(max-width:900px)')
   const [isHover, setIsHover] = React.useState(false)
+  const [isHoverVolume, setIsHoverVolume] = React.useState(false)
   const [dataMusic, setDataMusic] = React.useState<any>([])
+  const [volume, setVolume] = React.useState(100)
+  const [soundRain, setSoundRain] = React.useState(false)
   const navigate = useNavigate()
 
   const onLoadedMetadata = () => {
@@ -163,6 +183,16 @@ const Home = () => {
           }}
         >
           <CloudUploadIcon />
+        </IconButton>
+        <IconButton
+          onClick={() => {
+            setSoundRain(!soundRain)
+          }}
+          sx={{
+            color: soundRain ? 'primary.main' : 'none',
+          }}
+        >
+          <ThunderstormRoundedIcon />
         </IconButton>
       </Box>
       {dataMusic.length > 0 && (
@@ -352,67 +382,163 @@ const Home = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        mt: -1,
                       }}
                     >
-                      <IconButton
-                        aria-label="previous song"
-                        onClick={() => {
-                          prevSong()
-                          refMusic.current.audioEl.current.play()
-                        }}
+                      <Box
                         sx={{
-                          '&:hover': {
-                            color: 'primary.main',
-                          },
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          width: '100%',
+                          mt: 2,
                         }}
                       >
-                        <FastRewindRounded fontSize="large" />
-                      </IconButton>
-                      <IconButton
-                        aria-label={paused ? 'play' : 'pause'}
-                        onClick={() => {
-                          setPaused(!paused)
-                          if (paused) refMusic.current.audioEl.current.play()
-                          else refMusic.current.audioEl.current.pause()
-                        }}
-                      >
-                        {paused ? (
-                          <PlayArrowRounded
-                            sx={{
-                              fontSize: '3rem',
-                              '&:hover': {
-                                color: 'primary.main',
-                              },
-                            }}
-                          />
-                        ) : (
-                          <PauseRounded
-                            sx={{
-                              fontSize: '3rem',
-                              '&:hover': {
-                                color: 'primary.main',
-                              },
-                            }}
-                          />
-                        )}
-                      </IconButton>
-                      <IconButton
-                        aria-label="next song"
-                        onClick={() => {
-                          nextSong()
-                          refMusic.current.audioEl.current.play()
-                        }}
-                      >
-                        <FastForwardRounded
-                          fontSize="large"
+                        <Box
                           sx={{
-                            '&:hover': {
-                              color: 'primary.main',
-                            },
+                            position: 'relative',
                           }}
-                        />
-                      </IconButton>
+                        >
+                          <IconButton
+                            sx={{
+                              '&:hover': {
+                                color: 'primary.main',
+                              },
+                            }}
+                          >
+                            <ShuffleRoundedIcon fontSize="large" />
+                          </IconButton>
+                        </Box>
+                        <Box>
+                          <IconButton
+                            aria-label="previous song"
+                            onClick={() => {
+                              prevSong()
+                              refMusic.current.audioEl.current.play()
+                            }}
+                            sx={{
+                              '&:hover': {
+                                color: 'primary.main',
+                              },
+                            }}
+                          >
+                            <FastRewindRounded fontSize="large" />
+                          </IconButton>
+                          <IconButton
+                            aria-label={paused ? 'play' : 'pause'}
+                            onClick={() => {
+                              setPaused(!paused)
+                              if (paused) refMusic.current.audioEl.current.play()
+                              else refMusic.current.audioEl.current.pause()
+                            }}
+                          >
+                            {paused ? (
+                              <PlayArrowRounded
+                                sx={{
+                                  fontSize: '3rem',
+                                  '&:hover': {
+                                    color: 'primary.main',
+                                  },
+                                }}
+                              />
+                            ) : (
+                              <PauseRounded
+                                sx={{
+                                  fontSize: '3rem',
+                                  '&:hover': {
+                                    color: 'primary.main',
+                                  },
+                                }}
+                              />
+                            )}
+                          </IconButton>
+                          <IconButton
+                            aria-label="next song"
+                            onClick={() => {
+                              nextSong()
+                              refMusic.current.audioEl.current.play()
+                            }}
+                          >
+                            <FastForwardRounded
+                              fontSize="large"
+                              sx={{
+                                '&:hover': {
+                                  color: 'primary.main',
+                                },
+                              }}
+                            />
+                          </IconButton>
+                        </Box>
+
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            position: 'relative',
+                          }}
+                        >
+                          <IconButton
+                            onMouseEnter={() => {
+                              setIsHoverVolume(true)
+                            }}
+                            onMouseLeave={() => {
+                              setIsHoverVolume(false)
+                            }}
+                            onClick={() => {
+                              setVolume(volume === 0 ? 100 : 0)
+                            }}
+                            sx={{
+                              color: isHoverVolume ? 'primary.main' : 'none',
+                              transform: isHoverVolume ? 'translate(-80px, 0px)' : 'translate(0px, 0px)',
+                              transition:
+                                'transform 250ms ease-in-out, background 250ms ease-in-out, filter 250ms ease-in-out, color 250ms ease-in-out, box-shadow 250ms ease-in-out, border-left 250ms ease-in-out',
+                            }}
+                          >
+                            {volume === 0 && <VolumeMuteRoundedIcon fontSize="large" />}
+                            {volume > 0 && volume <= 50 && <VolumeDownRounded fontSize="large" />}
+                            {volume > 50 && <VolumeUpRounded fontSize="large" />}
+                          </IconButton>
+
+                          {isHoverVolume && (
+                            <Slider
+                              aria-label="Volume"
+                              value={volume}
+                              onChange={(_, value) => {
+                                setVolume(value as number)
+                              }}
+                              onMouseEnter={() => {
+                                setIsHoverVolume(true)
+                              }}
+                              onMouseLeave={() => {
+                                setIsHoverVolume(false)
+                              }}
+                              sx={{
+                                color: 'primary.main',
+                                transform: !isHoverVolume ? 'translate(70px, 0px)' : 'translate(0px, 0px)',
+                                position: 'absolute',
+                                top: '20%',
+                                left: '-50%',
+                                zIndex: 1,
+                                width: 80,
+                                '& .MuiSlider-track': {
+                                  border: 'none',
+                                },
+                                '& .MuiSlider-thumb': {
+                                  width: 24,
+                                  height: 24,
+                                  backgroundColor: '#fff',
+                                  '&:before': {
+                                    boxShadow: '0 4px 8px rgba(0,0,0,0.4)',
+                                  },
+                                  '&:hover, &.Mui-focusVisible, &.Mui-active': {
+                                    boxShadow: 'none',
+                                  },
+                                },
+                              }}
+                            />
+                          )}
+                        </Box>
+                      </Box>
                     </Box>
                   )}
                 </Box>
@@ -601,9 +727,16 @@ const Home = () => {
                 onListen={() => setPosition(refMusic.current.audioEl.current.currentTime)}
                 onLoadedMetadata={onLoadedMetadata}
                 autoPlay
+                volume={volume / 100}
               />
             </Grid>
           </Grid>
+          <ReactAudioPlayer
+            src="https://res.cloudinary.com/dlz0jqeah/video/upload/v1677267468/tieng_mua_roi_am_thanh_tu_nhien_-4492896179634205715_gnqzew.mp3"
+            autoPlay
+            loop
+            volume={soundRain ? 1 : 0}
+          />
         </Box>
       )}
     </Box>
