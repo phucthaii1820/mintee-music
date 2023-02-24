@@ -92,6 +92,7 @@ const Home = () => {
   const [dataMusic, setDataMusic] = React.useState<any>([])
   const [volume, setVolume] = React.useState(100)
   const [soundRain, setSoundRain] = React.useState(false)
+  const [random, setRandom] = React.useState(false)
   const navigate = useNavigate()
 
   const onLoadedMetadata = () => {
@@ -110,6 +111,11 @@ const Home = () => {
     }
   }
 
+  const randomSong = () => {
+    const randomIndex = Math.floor(Math.random() * dataMusic.length)
+    setAudioIndex(randomIndex)
+  }
+
   const prevSong = () => {
     if (audioIndex > 0) {
       setPosition(0)
@@ -122,8 +128,13 @@ const Home = () => {
 
   React.useEffect(() => {
     if (Math.floor(position) + 1 >= Math.floor(duration)) {
-      if (audioIndex < dataMusic.length - 1) nextSong()
-      else setAudioIndex(0)
+      if (audioIndex < dataMusic.length - 1) {
+        if (random) {
+          randomSong()
+        } else {
+          nextSong()
+        }
+      } else setAudioIndex(0)
     }
   }, [position])
 
@@ -400,9 +411,13 @@ const Home = () => {
                         >
                           <IconButton
                             sx={{
+                              color: random ? 'primary.main' : 'none',
                               '&:hover': {
                                 color: 'primary.main',
                               },
+                            }}
+                            onClick={() => {
+                              setRandom(!random)
                             }}
                           >
                             <ShuffleRoundedIcon fontSize="large" />
