@@ -3,3 +3,9 @@
     mask-image: paint(smooth-corners);
     -webkit-mask-image: paint(smooth-corners);
 }
+
+.music-card-list {
+    --smooth-corners: 60;
+    mask-image: paint(smooth-corners);
+    -webkit-mask-image: paint(smooth-corners);
+}

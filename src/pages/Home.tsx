@@ -8,12 +8,17 @@ import FastForwardRounded from '@mui/icons-material/FastForwardRounded'
 import FastRewindRounded from '@mui/icons-material/FastRewindRounded'
 import ReactAudioPlayer from 'react-audio-player'
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
+import LogoutIcon from '@mui/icons-material/Logout'
+import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 
-import { db } from 'firebaseConfig'
+import { auth, db, logout } from 'firebaseConfig'
 import { collection, getDocs } from 'firebase/firestore'
 import 'styles/eq-bar.css'
 import { cyan } from '@mui/material/colors'
 import 'styles/music.css'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 const gradient = keyframes`
 0% {
@@ -58,16 +63,16 @@ function formatDuration(value: number) {
 
 const Home = () => {
   // eslint-disable-next-line no-unused-vars
+  const [user] = useAuthState(auth)
   const [duration, setDuration] = React.useState(10)
   const [position, setPosition] = React.useState(0)
-  const [paused, setPaused] = React.useState(true)
+  const [paused, setPaused] = React.useState(false)
   const [audioIndex, setAudioIndex] = React.useState(0)
   const refMusic = React.useRef(null) as any
   const isMobile = useMediaQuery('(max-width:900px)')
   const [isHover, setIsHover] = React.useState(false)
   const [dataMusic, setDataMusic] = React.useState<any>([])
-
-  const musicCollection = collection(db, 'music')
+  const navigate = useNavigate()
 
   const onLoadedMetadata = () => {
     if (refMusic.current) {
@@ -103,16 +108,24 @@ const Home = () => {
   }, [position])
 
   const getMusic = async () => {
-    const data = await getDocs(musicCollection)
-    setDataMusic(
-      data.docs.map((doc) => {
-        return { ...doc.data(), id: doc.id }
-      }),
-    )
+    const musicCollection = collection(db, `${user?.uid}`)
+
+    await getDocs(musicCollection).then((data) => {
+      if (data?.empty) {
+        toast.info('Bạn chưa có bài hát nào trong thư viện, hãy thêm bài hát')
+        navigate('/upload')
+      } else {
+        setDataMusic(
+          data.docs.map((doc) => {
+            return { ...doc.data(), id: doc.id }
+          }),
+        )
+      }
+    })
   }
 
   React.useEffect(() => {
-    getMusic()
+    if (user) getMusic()
   }, [])
 
   return (
@@ -127,8 +140,31 @@ const Home = () => {
         animation: `${gradient} 10s ease infinite`,
         WebkitTapHighlightColor: 'transparent',
         backgroundSize: `350% 350%`,
+        position: 'relative',
       }}
     >
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+        }}
+      >
+        <IconButton onClick={logout}>
+          <LogoutIcon />
+        </IconButton>
+        <IconButton
+          onClick={() => {
+            navigate('/upload')
+          }}
+        >
+          <CloudUploadIcon />
+        </IconButton>
+      </Box>
       {dataMusic.length > 0 && (
         <Box
           sx={{
@@ -404,6 +440,7 @@ const Home = () => {
               >
                 {dataMusic.map((item: any, index: number) => (
                   <Card
+                    // className="music-card-list"
                     // eslint-disable-next-line react/no-array-index-key
                     key={index}
                     sx={{
@@ -414,7 +451,7 @@ const Home = () => {
                       filter: index === audioIndex ? 'brightness(1)' : 'brightness(1)',
                       boxShadow: index === audioIndex ? '0 0 5px rgba(0,0,0,0.2)' : 'none',
                       borderLeft: index === audioIndex ? `5px solid ${cyan[500]}` : 'none',
-                      borderRadius: '20px',
+                      borderRadius: '25px',
                       transition:
                         'transform 250ms ease-in-out, background 250ms ease-in-out, filter 250ms ease-in-out, color 250ms ease-in-out, box-shadow 250ms ease-in-out, border-left 250ms ease-in-out',
                       '&:hover': {

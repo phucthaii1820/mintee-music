@@ -4,15 +4,29 @@
 /* eslint-disable dot-notation */
 /* eslint-disable no-unused-vars */
 import React from 'react'
-import { Box, Button, CardMedia, Grid, keyframes, TextField, Typography, useMediaQuery } from '@mui/material'
+import {
+  Box,
+  Button,
+  CardMedia,
+  Grid,
+  IconButton,
+  keyframes,
+  TextField,
+  Typography,
+  useMediaQuery,
+} from '@mui/material'
 import ReactImageUploading from 'react-images-uploading'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 import ReactAudioPlayer from 'react-audio-player'
 import { toast } from 'react-toastify'
+import LogoutIcon from '@mui/icons-material/Logout'
+import HomeIcon from '@mui/icons-material/Home'
 
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { collection, addDoc } from 'firebase/firestore'
-import { storage, db } from 'firebaseConfig'
+import { db, auth, logout } from 'firebaseConfig'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 const gradient = keyframes`
 0% {
@@ -26,6 +40,8 @@ const gradient = keyframes`
 }`
 
 const UpdateMusicPage = () => {
+  const [user] = useAuthState(auth)
+  const navigate = useNavigate()
   const isMobile = useMediaQuery('(max-width:900px)')
   const [images, setImages] = React.useState([]) as any
   const [video, setVideo] = React.useState([]) as any
@@ -55,22 +71,23 @@ const UpdateMusicPage = () => {
     setIsPending(true)
     let url1 = ''
     let url2 = ''
-    let storageRef = ref(storage, `avata/${images[0]?.file.name}`)
-    await uploadBytes(storageRef, images[0]?.file).then(async (snapshot) => {
-      await getDownloadURL(snapshot.ref).then((url) => {
-        url1 = url
-      })
-    })
 
-    storageRef = ref(storage, `song/${video[0]?.file.name}`)
-    await uploadBytes(storageRef, video[0]?.file).then(async (snapshot) => {
-      await getDownloadURL(snapshot.ref).then((url) => {
-        url2 = url
-      })
-    })
+    const formData = new FormData()
+    formData.append('file', images[0]?.file)
+    formData.append('upload_preset', 'n4u1i8mp')
+    formData.append('cloud_name', 'dlz0jqeah')
+    const res = await axios.post('https://api.cloudinary.com/v1_1/dlz0jqeah/upload', formData)
+    url1 = res.data.secure_url
+
+    const formData2 = new FormData()
+    formData2.append('file', video[0]?.file)
+    formData2.append('upload_preset', 'nyxfdoqe')
+    formData2.append('cloud_name', 'dlz0jqeah')
+    const res2 = await axios.post('https://api.cloudinary.com/v1_1/dlz0jqeah/upload', formData2)
+    url2 = res2.data.secure_url
 
     try {
-      await addDoc(collection(db, 'music'), {
+      await addDoc(collection(db, `${user?.uid}`), {
         song,
         singer,
         avatar: url1,
@@ -99,8 +116,31 @@ const UpdateMusicPage = () => {
         animation: `${gradient} 10s ease infinite`,
         WebkitTapHighlightColor: 'transparent',
         backgroundSize: `350% 350%`,
+        position: 'relative',
       }}
     >
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+        }}
+      >
+        <IconButton onClick={logout}>
+          <LogoutIcon />
+        </IconButton>
+        <IconButton
+          onClick={() => {
+            navigate('/')
+          }}
+        >
+          <HomeIcon />
+        </IconButton>
+      </Box>
       <Box
         sx={{
           display: 'flex',
