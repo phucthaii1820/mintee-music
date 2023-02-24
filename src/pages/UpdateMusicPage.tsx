@@ -74,16 +74,22 @@ const UpdateMusicPage = () => {
 
     const formData = new FormData()
     formData.append('file', images[0]?.file)
-    formData.append('upload_preset', 'n4u1i8mp')
-    formData.append('cloud_name', 'dlz0jqeah')
-    const res = await axios.post('https://api.cloudinary.com/v1_1/dlz0jqeah/upload', formData)
+    formData.append('upload_preset', `${process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET_AVATAR}`)
+    formData.append('cloud_name', `${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}`)
+    const res = await axios.post(
+      `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/upload`,
+      formData,
+    )
     url1 = res.data.secure_url
 
     const formData2 = new FormData()
     formData2.append('file', video[0]?.file)
-    formData2.append('upload_preset', 'nyxfdoqe')
-    formData2.append('cloud_name', 'dlz0jqeah')
-    const res2 = await axios.post('https://api.cloudinary.com/v1_1/dlz0jqeah/upload', formData2)
+    formData2.append('upload_preset', `${process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET_MP3}`)
+    formData2.append('cloud_name', `${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}`)
+    const res2 = await axios.post(
+      `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/upload`,
+      formData2,
+    )
     url2 = res2.data.secure_url
 
     try {
