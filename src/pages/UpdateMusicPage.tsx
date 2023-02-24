@@ -31,6 +31,7 @@ const UpdateMusicPage = () => {
   const [video, setVideo] = React.useState([]) as any
   const [song, setSong] = React.useState('')
   const [singer, setSinger] = React.useState('')
+  const [isPending, setIsPending] = React.useState(false)
 
   const handleUpload = async () => {
     if (song === '') {
@@ -51,6 +52,7 @@ const UpdateMusicPage = () => {
       toast.error('Vui lòng chọn nhạc')
       return
     }
+    setIsPending(true)
     let url1 = ''
     let url2 = ''
     let storageRef = ref(storage, `avata/${images[0]?.file.name}`)
@@ -82,6 +84,7 @@ const UpdateMusicPage = () => {
     } catch (e) {
       toast.error('Thêm bài hát thất bại')
     }
+    setIsPending(false)
   }
 
   return (
@@ -101,7 +104,7 @@ const UpdateMusicPage = () => {
       <Box
         sx={{
           display: 'flex',
-          background: 'rgba(0,0,0,0.1)',
+          background: 'white',
           borderRadius: '10px',
           padding: '20px',
           boxShadow: '0 0 10px rgba(0,0,0,0.2)',
@@ -281,6 +284,7 @@ const UpdateMusicPage = () => {
                 borderRadius: '10px',
               }}
               onClick={handleUpload}
+              disabled={isPending}
             >
               Thêm bài hát
             </Button>

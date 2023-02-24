@@ -140,18 +140,19 @@ const Home = () => {
           }}
         >
           <Grid container spacing={6}>
-            <Grid item xs={12} md={5}>
+            <Grid item xs={12} md={5.3}>
               <Box
                 sx={{
                   background: 'white',
                   // background: 'rgba(0,0,0,0.1)',
                   boxShadow: '0 0 5px rgba(0,0,0,0.2)',
                   padding: '50px',
-                  // borderRadius: '40px',
+                  borderRadius: '40px',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
                   flexDirection: 'column',
+                  mx: 2,
                 }}
                 className="music-card"
               >
@@ -324,6 +325,11 @@ const Home = () => {
                           prevSong()
                           refMusic.current.audioEl.current.play()
                         }}
+                        sx={{
+                          '&:hover': {
+                            color: 'primary.main',
+                          },
+                        }}
                       >
                         <FastRewindRounded fontSize="large" />
                       </IconButton>
@@ -336,9 +342,23 @@ const Home = () => {
                         }}
                       >
                         {paused ? (
-                          <PlayArrowRounded sx={{ fontSize: '3rem' }} />
+                          <PlayArrowRounded
+                            sx={{
+                              fontSize: '3rem',
+                              '&:hover': {
+                                color: 'primary.main',
+                              },
+                            }}
+                          />
                         ) : (
-                          <PauseRounded sx={{ fontSize: '3rem' }} />
+                          <PauseRounded
+                            sx={{
+                              fontSize: '3rem',
+                              '&:hover': {
+                                color: 'primary.main',
+                              },
+                            }}
+                          />
                         )}
                       </IconButton>
                       <IconButton
@@ -348,14 +368,21 @@ const Home = () => {
                           refMusic.current.audioEl.current.play()
                         }}
                       >
-                        <FastForwardRounded fontSize="large" />
+                        <FastForwardRounded
+                          fontSize="large"
+                          sx={{
+                            '&:hover': {
+                              color: 'primary.main',
+                            },
+                          }}
+                        />
                       </IconButton>
                     </Box>
                   )}
                 </Box>
               </Box>
             </Grid>
-            <Grid item xs={12} md={7}>
+            <Grid item xs={12} md={6.7}>
               <Box
                 sx={{
                   maxHeight: isMobile ? 'calc(100vh - 490px)' : '520px',
@@ -379,21 +406,25 @@ const Home = () => {
                   <Card
                     // eslint-disable-next-line react/no-array-index-key
                     key={index}
-                    // className="music-list"
                     sx={{
                       height: '90px',
                       position: 'relative',
-                      color: index === audioIndex ? 'theme.palette.text.primary' : 'theme.palette.text.primary',
+                      color: index === audioIndex ? 'primary.main' : 'none',
                       background: index === audioIndex ? 'white' : 'white',
-                      filter: index === audioIndex ? 'brightness(1)' : 'brightness(0.8)',
+                      filter: index === audioIndex ? 'brightness(1)' : 'brightness(1)',
                       boxShadow: index === audioIndex ? '0 0 5px rgba(0,0,0,0.2)' : 'none',
-                      borderRadius: '10px',
+                      borderLeft: index === audioIndex ? `5px solid ${cyan[500]}` : 'none',
+                      borderRadius: '20px',
+                      transition:
+                        'transform 250ms ease-in-out, background 250ms ease-in-out, filter 250ms ease-in-out, color 250ms ease-in-out, box-shadow 250ms ease-in-out, border-left 250ms ease-in-out',
                       '&:hover': {
                         cursor: 'pointer',
                         background: 'white',
-                        filter: 'brightness(1)',
+                        filter: 'brightness(0.9)',
+                        color: 'primary.main',
+                        transform: 'translate(-10px)',
                       },
-                      mx: 1,
+                      mx: 2,
                       mb: index + 1 === dataMusic?.length ? 0 : 2,
                       p: '8px 15px',
                     }}
@@ -405,24 +436,49 @@ const Home = () => {
                     }}
                   >
                     <Box sx={{ display: 'flex', width: '100%', height: '100%' }}>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          px: 1,
-                        }}
-                      >
-                        <Typography
-                          fontWeight={700}
+                      {index === audioIndex && !paused ? (
+                        <Box
                           sx={{
-                            color: index === audioIndex ? 'primary.main' : 'none',
-                            opacity: index === audioIndex ? 1 : 0.38,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            px: 1,
                           }}
                         >
-                          {index < 10 ? `0${index + 1}` : index + 1}
-                        </Typography>
-                      </Box>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            style={{
+                              fill: cyan[500],
+                            }}
+                          >
+                            <rect className="eq-bar eq-bar--1" x="4" y="4" width="3.7" height="8" />
+                            <rect className="eq-bar eq-bar--2" x="10.2" y="4" width="3.7" height="16" />
+                            <rect className="eq-bar eq-bar--3" x="16.3" y="4" width="3.7" height="11" />
+                          </svg>
+                        </Box>
+                      ) : (
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            px: 1,
+                          }}
+                        >
+                          <Typography
+                            fontWeight={700}
+                            sx={{
+                              color: index === audioIndex ? 'primary.main' : 'none',
+                              opacity: index === audioIndex ? 1 : 0.38,
+                            }}
+                          >
+                            {index < 9 ? `0${index + 1}` : index + 1}
+                          </Typography>
+                        </Box>
+                      )}
 
                       <Box
                         sx={{
@@ -461,7 +517,6 @@ const Home = () => {
                           sx={{
                             opacity: index === audioIndex ? 1 : 0.38,
                             fontSize: '2rem',
-                            color: index === audioIndex ? 'primary.main' : 'none',
                           }}
                         />
                       </Box>
@@ -472,7 +527,7 @@ const Home = () => {
                           height: '100%',
                           flexDirection: 'column',
                           ml: 2,
-                          maxWidth: '50%',
+                          maxWidth: '60%',
                         }}
                       >
                         <Typography
@@ -483,7 +538,6 @@ const Home = () => {
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
-                            color: index === audioIndex ? 'primary.main' : 'none',
                             opacity: index === audioIndex ? 1 : 0.38,
                           }}
                         >
@@ -493,36 +547,12 @@ const Home = () => {
                           variant="subtitle2"
                           component="div"
                           sx={{
-                            color: index === audioIndex ? 'primary.main' : 'none',
                             opacity: index === audioIndex ? 0.6 : 0.38,
                           }}
                         >
                           {item.singer}
                         </Typography>
                       </Box>
-                      {index === audioIndex && !paused && (
-                        <Box
-                          sx={{
-                            position: 'absolute',
-                            right: '20px',
-                            top: 'calc(50% - 0.7rem)',
-                          }}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            style={{
-                              fill: cyan[500],
-                            }}
-                          >
-                            <rect className="eq-bar eq-bar--1" x="4" y="4" width="3.7" height="8" />
-                            <rect className="eq-bar eq-bar--2" x="10.2" y="4" width="3.7" height="16" />
-                            <rect className="eq-bar eq-bar--3" x="16.3" y="4" width="3.7" height="11" />
-                          </svg>
-                        </Box>
-                      )}
                     </Box>
                   </Card>
                 ))}
