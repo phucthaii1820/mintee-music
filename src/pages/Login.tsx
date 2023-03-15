@@ -43,7 +43,7 @@ const Login = () => {
       }}
     >
       <Button className="login__btn login__google" onClick={signInWithGoogle}>
-        Login with Google
+        Login With Google
       </Button>
     </Box>
   )
